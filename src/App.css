@@ -4,6 +4,7 @@
   padding: 20px;
   font-family: Arial, sans-serif;
   text-align: center;
+  position: relative;
 }
 
 h1 {
@@ -147,6 +148,12 @@ input:checked + .slider:before {
   padding: 10px;
   border-radius: 5px;
   margin: 20px 0;
+}
+
+.error.offline {
+  color: #856404;
+  background-color: #fff3cd;
+  border-color: #ffeeba;
 }
 
 .welcome-message {

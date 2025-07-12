@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchWeather, fetchWeatherByCoords } from "./api/fetchWeather";
 import NotificationSettings from "./components/NotificationSettings";
+import OfflineStatus from "./components/OfflineStatus";
 import initializeNotifications from "./utils/initNotifications";
 import "./App.css";
 
@@ -58,7 +59,11 @@ const App = () => {
       setWeatherData(data);
       setError(null);
     } catch (error) {
-      setError("Unable to fetch weather for your location.");
+      if (!navigator.onLine) {
+        setError("Location weather request has been queued. Data will be loaded when internet connection is restored.");
+      } else {
+        setError("Unable to fetch weather for your location.");
+      }
     } finally {
       setLoading(false);
     }
@@ -67,13 +72,19 @@ const App = () => {
   const fetchData = async (city) => {
     setLoading(true);
     setError(null);
+    
     try {
       const data = await fetchWeather(city);
       setWeatherData(data);
       setCityName("");
       updateRecentSearches(data.location.name);
     } catch (error) {
-      setError("City not found. Please try again.");
+      if (!navigator.onLine) {
+        setError(`Request for "${city}" has been queued. Weather data will be loaded when internet connection is restored.`);
+        setCityName("");
+      } else {
+        setError("City not found. Please try again.");
+      }
       setWeatherData(null);
     } finally {
       setLoading(false);
@@ -115,6 +126,9 @@ const App = () => {
     <div>
       <div className="app">
         <h1>Weather App</h1>
+        
+        <OfflineStatus />
+        
         <div className="search">
           <input
             type="text"
@@ -159,7 +173,11 @@ const App = () => {
           <span>°F</span>
         </div>
         {loading && <div className="loading">Loading...</div>}
-        {error && <div className="error">{error}</div>}
+        {error && (
+          <div className={`error ${!navigator.onLine ? 'offline' : ''}`}>
+            {error}
+          </div>
+        )}
         {!weatherData && !loading && !error && (
           <div className="welcome-message">
             <p>Welcome! Click "Use My Location" to see local weather or search for a city.</p>

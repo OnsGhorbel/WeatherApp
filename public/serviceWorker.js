@@ -1,11 +1,15 @@
-const CACHE_NAME = "weather-app-v6";
+const CACHE_NAME = "weather-app-v7";
 const urlsToCache = [
-  `index.html`,
-  `offline.html`,
+  "/",
+  "/index.html",
+  "/offline.html",
+  "/static/js/bundle.js",
+  "/static/css/main.css",
+  "/manifest.json",
+  "/logo.png"
 ];
 
 // install sw
-
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -16,20 +20,41 @@ self.addEventListener("install", (event) => {
 });
 
 // listen for requests
-
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      return fetch(event.request).catch(() => caches.match("offline.html"));
-    })
-  );
+  // Handle API requests differently
+  if (event.request.url.includes('api.weatherapi.com')) {
+    event.respondWith(
+      fetch(event.request).catch(() => {
+        // If network request fails, we'll let the OfflineService handle it
+        return new Response(
+          JSON.stringify({ error: 'Network unavailable, request queued' }),
+          { 
+            status: 503,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+      })
+    );
+  } else {
+    // Handle other requests with cache-first strategy
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        return fetch(event.request).catch(() => {
+          // If it's a navigation request, return offline page
+          if (event.request.mode === 'navigate') {
+            return caches.match('/offline.html');
+          }
+          return new Response('Network error', { status: 503 });
+        });
+      })
+    );
+  }
 });
 
 // activate sw
-
 self.addEventListener("activate", (event) => {
   const cacheWhiteList = [CACHE_NAME];
 
