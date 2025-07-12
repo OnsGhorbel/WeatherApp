@@ -1,19 +1,62 @@
 import React, { useState, useEffect } from "react";
-import { fetchWeather } from "./api/fetchWeather";
+import { fetchWeather, fetchWeatherByCoords } from "./api/fetchWeather";
+import "./App.css";
 
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [cityName, setCityName] = useState("");
   const [error, setError] = useState(null);
-  const [isCelsius, setIsCelsius] = useState(null);
+  const [isCelsius, setIsCelsius] = useState(true);
   const [loading, setLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
+  const [locationPermission, setLocationPermission] = useState(null);
 
   useEffect(() => {
     const savedSearches =
       JSON.parse(localStorage.getItem("recentSearches")) || [];
     setRecentSearches(savedSearches);
+    
+    // Try to get user's location on app load
+    getUserLocation();
   }, []);
+
+  const getUserLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationPermission("not_supported");
+      return;
+    }
+
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setLocationPermission("granted");
+        fetchWeatherByLocation(latitude, longitude);
+      },
+      (error) => {
+        setLocationPermission("denied");
+        setLoading(false);
+        console.log("Location access denied:", error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
+      }
+    );
+  };
+
+  const fetchWeatherByLocation = async (lat, lon) => {
+    try {
+      const data = await fetchWeatherByCoords(lat, lon);
+      setWeatherData(data);
+      setError(null);
+    } catch (error) {
+      setError("Unable to fetch weather for your location.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchData = async (city) => {
     setLoading(true);
@@ -74,6 +117,28 @@ const App = () => {
             onChange={(e) => setCityName(e.target.value)}
             onKeyDown={handleKeyPress}
           />
+          <button onClick={() => fetchData(cityName)} disabled={!cityName || loading}>
+            Search
+          </button>
+        </div>
+        <div className="location-section">
+          <button 
+            onClick={getUserLocation} 
+            disabled={loading}
+            className="location-btn"
+          >
+            📍 Use My Location
+          </button>
+          {locationPermission === "denied" && (
+            <p className="location-message">
+              Location access denied. Please enable location or search manually.
+            </p>
+          )}
+          {locationPermission === "not_supported" && (
+            <p className="location-message">
+              Geolocation is not supported by this browser.
+            </p>
+          )}
         </div>
         <div className="unit-toggle">
           <span>°C</span>
@@ -89,6 +154,11 @@ const App = () => {
         </div>
         {loading && <div className="loading">Loading...</div>}
         {error && <div className="error">{error}</div>}
+        {!weatherData && !loading && !error && (
+          <div className="welcome-message">
+            <p>Welcome! Click "Use My Location" to see local weather or search for a city.</p>
+          </div>
+        )}
         {weatherData && (
           <div className="weather-info">
             <h2>
