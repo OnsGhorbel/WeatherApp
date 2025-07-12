@@ -45,3 +45,56 @@ self.addEventListener("activate", (event) => {
     })
   );
 });
+
+// Handle notification click
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  
+  // Handle different actions
+  if (event.action === 'view') {
+    // Open the app
+    event.waitUntil(
+      clients.openWindow(event.notification.data.url || '/')
+    );
+  } else if (event.action === 'dismiss') {
+    // Just close the notification
+    return;
+  } else {
+    // Default action (clicking on notification body)
+    event.waitUntil(
+      clients.openWindow(event.notification.data.url || '/')
+    );
+  }
+});
+
+// Handle push events (for future FCM integration)
+self.addEventListener('push', (event) => {
+  let notificationData = {
+    title: 'Weather Alert',
+    body: 'Check your daily weather forecast',
+    icon: '/logo.png',
+    badge: '/logo.png',
+    tag: 'weather-push',
+    data: {
+      url: '/'
+    }
+  };
+
+  if (event.data) {
+    try {
+      const pushData = event.data.json();
+      notificationData = { ...notificationData, ...pushData };
+    } catch (error) {
+      console.error('Error parsing push data:', error);
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(notificationData.title, notificationData)
+  );
+});
+
+// Handle notification close
+self.addEventListener('notificationclose', (event) => {
+  console.log('Notification closed:', event.notification.tag);
+});

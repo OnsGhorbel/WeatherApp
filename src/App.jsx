@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { fetchWeather, fetchWeatherByCoords } from "./api/fetchWeather";
+import NotificationSettings from "./components/NotificationSettings";
+import initializeNotifications from "./utils/initNotifications";
 import "./App.css";
 
 const App = () => {
@@ -16,8 +18,12 @@ const App = () => {
       JSON.parse(localStorage.getItem("recentSearches")) || [];
     setRecentSearches(savedSearches);
     
+    // Initialize notifications
+    initializeNotifications();
+    
     // Try to get user's location on app load
     getUserLocation();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getUserLocation = () => {
@@ -188,6 +194,8 @@ const App = () => {
             </ul>
           </div>
         )}
+        
+        <NotificationSettings />
       </div>
     </div>
   );

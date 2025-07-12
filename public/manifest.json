@@ -5,6 +5,11 @@
   "start_url": ".",
   "display": "standalone",
   "background_color": "#ffffff",
+  "theme_color": "#667eea",
+  "permissions": [
+    "notifications",
+    "geolocation"
+  ],
   "icons": [
     {
       "src": "logo.png",

@@ -1,0 +1,248 @@
+.notification-settings {
+  margin: 20px 0;
+}
+
+.notification-card {
+  background: linear-gradient(135deg, #8b8fa1 0%, #eee3fc 100%);
+  border-radius: 15px;
+  padding: 25px;
+  color: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.notification-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+.notification-description {
+  margin: 0 0 20px 0;
+  opacity: 0.9;
+  line-height: 1.5;
+}
+
+.notification-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.notification-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.status-dot.granted {
+  background-color: #4CAF50;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.status-dot.denied {
+  background-color: #f44336;
+  box-shadow: 0 0 10px rgba(244, 67, 54, 0.5);
+}
+
+.status-dot.default {
+  background-color: #ff9800;
+  box-shadow: 0 0 10px rgba(255, 152, 0, 0.5);
+}
+
+.status-text {
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.notification-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-label input[type="checkbox"] {
+  display: none;
+}
+
+.toggle-slider {
+  width: 50px;
+  height: 25px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 25px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 21px;
+  height: 21px;
+  background-color: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s ease;
+}
+
+.toggle-label input[type="checkbox"]:checked + .toggle-slider {
+  background-color: rgba(76, 175, 80, 0.8);
+}
+
+.toggle-label input[type="checkbox"]:checked + .toggle-slider::before {
+  transform: translateX(25px);
+}
+
+.toggle-text {
+  font-weight: 500;
+  font-size: 0.9em;
+}
+
+.time-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.time-picker label {
+  font-weight: 500;
+  font-size: 0.9em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-picker input[type="time"] {
+  background: rgba(255, 255, 255, 0.307);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: white;
+  padding: 8px 12px;
+  font-size: 0.9em;
+  max-width: 120px;
+}
+
+.time-picker input[type="time"]:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.notification-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.enable-btn, .test-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 0.9em;
+}
+
+.enable-btn:hover, .test-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.enable-btn:disabled, .test-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.permission-denied {
+  background: rgba(244, 67, 54, 0.2);
+  border: 1px solid rgba(244, 67, 54, 0.3);
+  border-radius: 8px;
+  padding: 15px;
+  margin-top: 10px;
+}
+
+.permission-denied p {
+  margin: 0 0 10px 0;
+  font-size: 0.9em;
+}
+
+.permission-denied ol {
+  margin: 10px 0 0 0;
+  padding-left: 20px;
+  font-size: 0.85em;
+}
+
+.permission-denied li {
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+.not-supported {
+  background: rgba(255, 152, 0, 0.2);
+  border: 1px solid rgba(255, 152, 0, 0.3);
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+}
+
+.not-supported p {
+  margin: 0 0 10px 0;
+  font-size: 0.9em;
+}
+
+.not-supported p:last-child {
+  margin-bottom: 0;
+  font-size: 0.85em;
+  opacity: 0.8;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .notification-card {
+    padding: 20px;
+    margin: 15px 0;
+  }
+  
+  .notification-card h3 {
+    font-size: 1.2em;
+  }
+  
+  .notification-actions {
+    flex-direction: column;
+  }
+  
+  .enable-btn, .test-btn {
+    width: 100%;
+  }
+  
+  .time-picker input[type="time"] {
+    width: 100%;
+    max-width: none;
+  }
+}
